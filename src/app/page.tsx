@@ -5,26 +5,29 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-25">
-          {Array.from({ length: 12 }, (_, index) => (
+      <div className="px-20 bg-base-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20">
+          {Array.from({ length: 16 }, (_, index) => (
             <div
               key={index}
-              className="relative w-full aspect-[4/3] overflow-hidden group cursor-pointer"
+              className="relative w-full aspect-[4/3] overflow-hidden group"
             >
+              {/* รูปภาพ */}
               <Image
                 src="/assets/projects/X3 TARA RESORT.jpg"
                 alt={`Project ${index + 1}`}
                 fill
-                className="object-cover transition duration-300 group-hover:scale-105"
+                className="object-cover transition duration-300 group-hover:blur-sm"
               />
 
-              {
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-base-100 bg-opacity-40 opacity-0 group-hover:opacity-50 transition duration-300">
-                  <p className="text-black text-lg font-medium">Fosfaatweg</p>
-                  <p className="text-black text-sm">Amsterdam, CH.</p>
-                </div>
-              }
+              {/* Overlay เบลอเบา ๆ (พื้นหลังจาง 50%) */}
+              <div className="absolute inset-0 bg-base-100 bg-opacity-50 opacity-0 group-hover:opacity-45 transition duration-300 pointer-events-none" />
+
+              {/* ตัวอักษรอยู่ด้านบน overlay แยกต่างหาก ชัดเจนเสมอ */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none z-10">
+                <p className=" text-lg font-light">Fosfaatweg</p>
+                <p className=" text-sm font-light">Amsterdam, CH.</p>
+              </div>
             </div>
           ))}
         </div>
