@@ -1,16 +1,18 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Kanit, Prompt } from 'next/font/google'
 import './globals.css'
-import "boxicons/css/boxicons.min.css";
+import 'boxicons/css/boxicons.min.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
+const kanit = Kanit({
+  variable: '--font-thai',
+  subsets: ['thai'],
+  weight: ['300', '400', '500', '700']
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
+const prompt = Prompt({
+  variable: '--font-latin',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700']
 })
 
 export const metadata: Metadata = {
@@ -24,10 +26,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="th">
+      <body className={`${kanit.variable} ${prompt.variable} antialiased`}>
         {children}
       </body>
     </html>
