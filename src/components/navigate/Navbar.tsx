@@ -1,6 +1,6 @@
 export default function Navbar() {
   return (
-    <div className="navbar px-7 bg-base-100 container mx-auto">
+    <div className="navbar px-7 bg-base-100 sticky top-0 z-50">
       <div className="navbar-start">
         <h1 className="font-light text-xl">Cana Architects</h1>
       </div>
