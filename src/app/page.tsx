@@ -1,3 +1,4 @@
+import Footer from '@/components/navigate/Footer';
 import Navbar from '@/components/navigate/Navbar'
 import Image from 'next/image'
 
@@ -5,7 +6,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="px-20 bg-base-200">
+      <div className="px-20 bg-base-200 pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20">
           {Array.from({ length: 16 }, (_, index) => (
             <div
@@ -32,6 +33,7 @@ export default function Home() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   )
 }
