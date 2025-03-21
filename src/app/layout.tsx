@@ -12,7 +12,7 @@ const kanit = Kanit({
 const prompt = Prompt({
   variable: '--font-latin',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '700']
+  weight: ['100','200','300', '400', '500', '700']
 })
 
 export const metadata: Metadata = {

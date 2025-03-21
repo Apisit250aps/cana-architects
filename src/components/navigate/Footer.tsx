@@ -1,7 +1,7 @@
 import Image from 'next/image'
 export default function Footer() {
   return (
-    <footer className="footer sm:footer-horizontal bg-base-200 text-neutral-content p-10">
+    <footer className="footer footer-horizontal footer-center bg-base-100 text-black p-10">
       <aside>
         <Image
           width={128}
@@ -9,15 +9,20 @@ export default function Footer() {
           src={'/assets/logo/cana-architects-logo.png'}
           alt={''}
         />
+        <p className="font-bold">
+          CANA Architects
+          <br />
+          {/* Providing reliable tech since 1992 */}
+        </p>
+        <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
       </aside>
-      <nav className="text-black">
-        <h6 className="footer-title">Social</h6>
-        <div className="grid grid-flow-col gap-4 text-black">
-          <a>
-            <i className="bx bxl-facebook bx-md"></i>
-          </a>
+      <nav>
+        <div className="grid grid-flow-col gap-4">
           <a>
             <i className="bx bxl-tiktok bx-md"></i>
+          </a>
+          <a>
+            <i className="bx bxl-facebook bx-md"></i>
           </a>
           <a>
             <i className="bx bxl-instagram bx-md"></i>
