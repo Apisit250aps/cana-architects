@@ -6,7 +6,7 @@ import 'boxicons/css/boxicons.min.css'
 const kanit = Kanit({
   variable: '--font-thai',
   subsets: ['thai'],
-  weight: ['300', '400', '500', '700']
+  weight: ['100','200','300', '400', '500', '700']
 })
 
 const prompt = Prompt({
