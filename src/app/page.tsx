@@ -302,13 +302,13 @@ export default function Home() {
       <footer className="footer footer-horizontal footer-center bg-base-100 text-black pb-10">
         <aside>
           <Image
-            width={256}
-            height={256}
-            src={'/assets/logo/cana-architects-h.png'}
+            width={128}
+            height={128}
+            src={'/assets/logo/cana-architects-v.png'}
             alt={''}
           />
           <nav>
-            <div className="grid grid-flow-col gap-4">
+            <div className="grid grid-flow-col gap-4 pt-4">
               <a>
                 <i className="bx bxl-tiktok bx-sm"></i>
               </a>
