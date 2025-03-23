@@ -18,7 +18,7 @@ export default function ImageFrame({ src, title, location }: FrameProps) {
       />
 
       {/* Overlay ที่จะค่อยๆ เพิ่มความเข้ม */}
-      <div className="absolute inset-0 bg-base-200/0 transition-colors duration-700 ease-out group-hover:bg-base-200/65" />
+      <div className="absolute inset-0 bg-base-200/0 transition-colors duration-700 ease-out group-hover:bg-base-200/80" />
 
       {/* Text ที่จะเลื่อนขึ้นจากด้านล่างพร้อมกับค่อยๆ ปรากฏ */}
       <div className="absolute inset-x-0 bottom-0 p-4">

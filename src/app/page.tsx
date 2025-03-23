@@ -111,7 +111,13 @@ export default function Home() {
       <div className="sticky top-0 z-50 bg-base-100">
         <div className="navbar px-5 sm:px-10 lg:px-15 flex flex-col lg:flex-row items-center">
           <div className="navbar-start justify-center lg:justify-start">
-            <h1 className="text-xl uppercase font-medium">Cana Architects</h1>
+            <Image
+              width={192}
+              height={192}
+              src={'/assets/logo/cana-architects-h.png'}
+              alt={''}
+            />
+            {/* <h1 className="text-xl uppercase font-medium">Cana Architects</h1> */}
           </div>
 
           {/* Desktop navigation */}
@@ -296,9 +302,9 @@ export default function Home() {
       <footer className="footer footer-horizontal footer-center bg-base-100 text-black pb-10">
         <aside>
           <Image
-            width={128}
-            height={128}
-            src={'/assets/logo/cana-architects-logo.png'}
+            width={256}
+            height={256}
+            src={'/assets/logo/cana-architects-logo-h.png'}
             alt={''}
           />
           <nav>
@@ -314,12 +320,7 @@ export default function Home() {
               </a>
             </div>
           </nav>
-          <p className="font-bold">
-            CANA architects
-            <br />
-            {/* Providing reliable tech since 1992 */}
-          </p>
-          <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
+          
         </aside>
       </footer>
     </>
