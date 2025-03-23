@@ -112,9 +112,9 @@ export default function Home() {
         <div className="navbar px-5 sm:px-10 lg:px-15 flex flex-col lg:flex-row items-center">
           <div className="navbar-start justify-center lg:justify-start">
             <Image
-              width={192}
-              height={192}
-              src={'/assets/logo/cana-architects-h.png'}
+              width={64}
+              height={64}
+              src={'/assets/logo/cana-architects-v.png'}
               alt={''}
             />
             {/* <h1 className="text-xl uppercase font-medium">Cana Architects</h1> */}
