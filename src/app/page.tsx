@@ -192,6 +192,8 @@ export default function Home() {
                 setIsMenuOpen(false)
                 setIsFilterOpen(!isFilterOpen)
               }}
+              id="filter"
+              aria-label="filter"
             >
               <i className="bx bx-filter"></i>
             </button>
@@ -202,6 +204,8 @@ export default function Home() {
                 setIsFilterOpen(false)
                 setIsMenuOpen(!isMenuOpen)
               }}
+              id="menu"
+              aria-label="menu"
             >
               <i className="bx bx-menu-alt-right"></i>
             </button>
@@ -309,18 +313,29 @@ export default function Home() {
           />
           <nav>
             <div className="grid grid-flow-col gap-4 pt-4">
-              <a>
+              <a
+                href={'https://www.tiktok.com/@cana.architects'}
+                id="tiktok"
+                aria-label="tiktok"
+              >
                 <i className="bx bxl-tiktok bx-sm"></i>
               </a>
-              <a>
+              <a
+                href={'https://www.facebook.com/cana.architects'}
+                id="facebook"
+                aria-label="facebook"
+              >
                 <i className="bx bxl-facebook bx-sm"></i>
               </a>
-              <a>
+              <a
+                href={'https://www.instagram.com/cana.architects/'}
+                id="instagram"
+                aria-label="instagram"
+              >
                 <i className="bx bxl-instagram bx-sm"></i>
               </a>
             </div>
           </nav>
-          
         </aside>
       </footer>
     </>
