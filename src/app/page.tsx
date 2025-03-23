@@ -208,7 +208,7 @@ export default function Home() {
             isFilterOpen ? 'collapse-open' : 'collapse-close hidden'
           }`}
         >
-          <div className="collapse-content bg-base-100 px-5 pt-0 pb-4 shadow-md">
+          <div className="collapse-content bg-base-100 px-5 sm:px-10 lg:px-15  pt-0 pb-4 shadow-md">
             <ul className="flex flex-col gap-y-2 mt-2">
               <li>
                 <button
@@ -243,14 +243,13 @@ export default function Home() {
             </ul>
           </div>
         </div>
-
         {/* Mobile menu collapse */}
         <div
           className={`collapse lg:hidden ${
             isMenuOpen ? 'collapse-open' : 'collapse-close '
           }`}
         >
-          <div className="collapse-content bg-base-100 px-5 pt-0 pb-4 shadow-md">
+          <div className="collapse-content bg-base-100 px-5 sm:px-10 lg:px-15  pt-0 pb-4 shadow-md">
             <ul className="flex flex-col gap-y-2 mt-2">
               <li>
                 <a
