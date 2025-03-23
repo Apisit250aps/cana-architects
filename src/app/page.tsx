@@ -304,7 +304,7 @@ export default function Home() {
           <Image
             width={256}
             height={256}
-            src={'/assets/logo/cana-architects-logo-h.png'}
+            src={'/assets/logo/cana-architects-h.png'}
             alt={''}
           />
           <nav>
