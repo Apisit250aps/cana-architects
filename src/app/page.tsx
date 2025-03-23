@@ -260,7 +260,7 @@ export default function Home() {
               <li>
                 <a
                   href={'/'}
-                  className="text-base lowercase font-extralight hover:text-black"
+                  className=" text-black lowercase font-extralight hover:text-black"
                 >
                   Projects
                 </a>
@@ -268,7 +268,7 @@ export default function Home() {
               <li>
                 <a
                   href={'/about'}
-                  className="text-base lowercase font-extralight hover:text-black"
+                  className=" text-black lowercase font-extralight hover:text-black"
                 >
                   About
                 </a>
@@ -276,7 +276,7 @@ export default function Home() {
               <li>
                 <a
                   href={'/contact'}
-                  className="text-base lowercase font-extralight hover:text-black"
+                  className=" text-black lowercase font-extralight hover:text-black"
                 >
                   Contact
                 </a>

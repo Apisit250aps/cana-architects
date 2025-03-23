@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="th">
+    <html lang="th" data-theme="light">
       <body className={`${kanit.variable} ${prompt.variable} antialiased`}>
         {children}
       </body>
