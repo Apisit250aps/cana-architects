@@ -339,7 +339,6 @@ const AdminUploadPage = () => {
             <div className="card bg-base-100">
               <div className="card-body">
                 <h2 className="card-title">Project Details</h2>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="form-control w-full">
                     <label className="label">
@@ -491,7 +490,7 @@ const AdminUploadPage = () => {
                 <div className="grid grid-cols-1 gap-6">
                   <div className="form-control w-full">
                     <label className="label">
-                      <span className="label-text">Completion</span>
+                      <span className="label-text">Tags</span>
                     </label>
                     <input
                       type="text"
@@ -502,7 +501,7 @@ const AdminUploadPage = () => {
                     />
                   </div>
                   <fieldset className="fieldset w-full">
-                    <legend className="fieldset-legend">Your bio</legend>
+                    <legend className="fieldset-legend">Description</legend>
                     <textarea
                       className="textarea h-24 w-full"
                       placeholder="Description"
