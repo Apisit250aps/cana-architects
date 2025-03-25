@@ -1,23 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { MongoClient } from 'mongodb'
-import { createClient } from '@supabase/supabase-js'
-import slugify from 'slugify'
+import { NextRequest, NextResponse } from 'next/server';
+import { connectDB } from '@/lib/database';
+import { Project } from '@/models/projects';
 
-// Environment variables
-const MONGODB_URI = process.env.MONGODB_URI || '';
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+import slugify from 'slugify';
+import { uploadToStorage } from '@/lib/utils';
 
-// Initialize MongoDB client
-const client = new MongoClient(MONGODB_URI);
 
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    // Parse the form data
+    // Connect to database
+    await connectDB();
+    
+    // Parse form data
     const formData = await req.formData();
+    
+    // Extract and validate cover image
+    const coverImageFile = formData.get('coverImage') as File | null;
+    if (!coverImageFile) {
+      return NextResponse.json({ error: 'Cover image is required' }, { status: 400 });
+    }
     
     // Extract project details
     const title = formData.get('title') as string;
@@ -25,77 +27,63 @@ export async function POST(req: NextRequest) {
     const type = formData.get('type') as string;
     const category = formData.get('category') as string;
     const program = formData.get('program') as string;
-    const client_ = formData.get('client') as string;
+    const client = formData.get('client') as string;
     const siteArea = formData.get('siteArea') as string;
     const builtArea = formData.get('builtArea') as string;
     const design = formData.get('design') as string;
     const completion = formData.get('completion') as string;
     const description = formData.get('description') as string;
-    const tags = JSON.parse(formData.get('tags') as string || '[]');
+    const tagsJson = formData.get('tags') as string;
     
-    // Get cover image
-    const coverImage = formData.get('coverImage') as File;
-    
-    if (!title || !location || !description || !coverImage) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Validate required fields
+    if (!title || !location || !description) {
+      return NextResponse.json({ 
+        error: 'Missing required fields: title, location, and description are required' 
+      }, { status: 400 });
     }
     
-    // Connect to MongoDB
-    await client.connect();
-    const db = client.db('architecture-portfolio');
-    const projectsCollection = db.collection('projects');
-    
-    // Create slug from title
-    let slug = slugify(title, { lower: true, strict: true });
-    
-    // Check if slug already exists and modify if needed
-    const existingProject = await projectsCollection.findOne({ slug });
-    if (existingProject) {
-      slug = `${slug}-${Date.now()}`;
+    // Process tags
+    let tags: string[] = [];
+    try {
+      tags = JSON.parse(tagsJson || '[]');
+    } catch (error) {
+      console.error('Error parsing tags:', error);
+      // Default to empty array if parsing fails
+      tags = [];
     }
     
-    // Upload cover image to Supabase
-    let coverImageUrl = '';
+    // Generate slug from title
+    const baseSlug = slugify(title, {
+      lower: true,
+      strict: true,
+      replacement: '-'
+    });
     
-    if (coverImage) {
-      const fileExt = coverImage.name.split('.').pop();
-      const fileName = `${slug}-cover.${fileExt}`;
-      
-      // Convert File to ArrayBuffer
-      const arrayBuffer = await coverImage.arrayBuffer();
-      const buffer = new Uint8Array(arrayBuffer);
-      
-      // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('canaarchitecture')
-        .upload(`projects/${fileName}`, buffer, {
-          contentType: coverImage.type,
-          upsert: true
-        });
-      
-      if (uploadError) {
-        throw new Error(`Failed to upload cover image: ${uploadError.message}`);
-      }
-      
-      // Get public URL
-      const { data: urlData } = supabase
-        .storage
-        .from('canaarchitecture')
-        .getPublicUrl(`projects/${fileName}`);
-      
-      coverImageUrl = urlData.publicUrl;
+    // Check if slug already exists and append counter if needed
+    let slug = baseSlug;
+    let counter = 1;
+    
+    while (await Project.findOne({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
     }
     
-    // Create project document
-    const projectDocument = {
+    // Convert cover image File to Buffer and upload
+    const coverImageBuffer = Buffer.from(await coverImageFile.arrayBuffer());
+    const coverImageName = `projects/${slug}/cover-${Date.now()}-${coverImageFile.name.replace(/\s/g, '-')}`;
+    
+    // Upload image to storage (e.g. S3, local filesystem, etc.)
+    const coverImageUrl = await uploadToStorage(coverImageBuffer, coverImageName, coverImageFile.type);
+    
+    // Create new project
+    const newProject = new Project({
       title,
       slug,
       location,
       type,
       category,
       program,
-      client: client_,
+      client,
       siteArea,
       builtArea,
       design,
@@ -103,85 +91,49 @@ export async function POST(req: NextRequest) {
       description,
       tags,
       coverImage: coverImageUrl,
-      galleryImages: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+      galleryImages: [] // Will be populated later via the gallery endpoint
+    });
     
-    // Insert project to MongoDB
-    const result = await projectsCollection.insertOne(projectDocument);
+    // Save project to database
+    await newProject.save();
     
-    // Get the inserted document with _id
-    const insertedProject = await projectsCollection.findOne({ _id: result.insertedId });
-    
-    return NextResponse.json({ 
-      success: true, 
+    // Return success response with project data
+    return NextResponse.json({
       message: 'Project created successfully',
-      project: insertedProject
+      project: newProject
     }, { status: 201 });
     
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Error creating project:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to create project' 
     }, { status: 500 });
-  } finally {
-    // Close MongoDB connection
-    await client.close();
   }
 }
 
+// For handling large uploads
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+
 export async function GET(req: NextRequest) {
   try {
-    // Connect to MongoDB
-    await client.connect();
-    const db = client.db('architecture-portfolio');
-    const projectsCollection = db.collection('projects');
+    // Connect to database
+    await connectDB();
     
-    // Get URL parameters
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const page = parseInt(searchParams.get('page') || '1');
-    const skip = (page - 1) * limit;
+    // Fetch all projects
+    const projects = await Project.find();
     
-    // Build query
-    const query: Record<string, any> = {};
-    if (category) {
-      query.category = category;
-    }
-    
-    // Find projects
-    const projects = await projectsCollection
-      .find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray();
-    
-    // Count total projects
-    const totalProjects = await projectsCollection.countDocuments(query);
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        projects,
-        pagination: {
-          total: totalProjects,
-          page,
-          limit,
-          pages: Math.ceil(totalProjects / limit)
-        }
-      }
-    });
+    // Return projects
+    return NextResponse.json({ projects });
     
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Error fetching projects:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to fetch projects' 
     }, { status: 500 });
-  } finally {
-    // Close MongoDB connection
-    await client.close();
   }
 }

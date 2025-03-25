@@ -1,18 +1,26 @@
+
 import Image from 'next/image'
 
-type FrameProps = {
-  src: string
+export default function ImageFrame({
+  coverImage,
+  title,
+  location,
+  slug
+}: {
+  coverImage: string
   title: string
   location: string
-}
-
-export default function ImageFrame({ src, title, location }: FrameProps) {
+  slug: string
+}) {
   return (
-    <div className="relative w-full aspect-[4/3] overflow-hidden cursor-pointer group">
+    <a
+      href={`${slug}`}
+      className="relative w-full aspect-[4/3] overflow-hidden cursor-pointer group"
+    >
       {/* รูปภาพ */}
       <Image
-        src={src}
-        alt={title}
+        src={coverImage}
+        alt={coverImage.slice(-3)}
         fill
         className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
       />
@@ -27,6 +35,6 @@ export default function ImageFrame({ src, title, location }: FrameProps) {
           <p className="text-sm font-extralight text-black/90">{location}</p>
         </div>
       </div>
-    </div>
+    </a>
   )
 }

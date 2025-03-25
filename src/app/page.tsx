@@ -1,89 +1,30 @@
 'use client'
 import ImageFrame from '@/components/gallery/ImageFrame'
+import { IProject } from '@/models/projects'
+import axios from 'axios'
 import Image from 'next/image'
-import { useState, useEffect, SetStateAction } from 'react'
-
-interface Project {
-  src: string
-  title: string
-  location: string
-  type: string
-}
+import { useState, useEffect, SetStateAction, useCallback } from 'react'
 
 export default function Home() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState('all')
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
+  const [filteredProjects, setFilteredProjects] = useState<IProject[]>([])
+  const [projects, setProjectData] = useState<IProject[]>([])
 
-  const projects = [
-    {
-      src: 'A ROCKET.jpg',
-      title: 'A ROCKET',
-      location: 'Chonburi, Thailand',
-      type: 'exterior'
-    },
-    {
-      src: 'BAAN PHALANG.jpg',
-      title: 'BAAN PHALANG',
-      location: 'Khao Yai, Thailand',
-      type: 'exterior'
-    },
-    {
-      src: 'RUEDUFON.png',
-      title: 'RUEDUFON',
-      location: 'Chiangdao, Chiangmai',
-      type: 'exterior'
-    },
-    {
-      src: 'VIN PRINT DESIGN.png',
-      title: 'VIN PRINT DESIGN',
-      location: 'Bangkok, Thailand',
-      type: 'interior'
-    },
-    {
-      src: 'X3 TARA RESORT.jpg',
-      title: 'X3 TARA RESORT',
-      location: 'Nan, Thailand',
-      type: 'interior'
-    },
-    {
-      src: 'BAAN RIM NAAM.png',
-      title: 'BAAN RIM NAAM',
-      location: 'Khao Yai, Thailand',
-      type: 'interior'
-    },
-    {
-      src: 'X3 KHAOYAI.jpg',
-      title: 'X3 KHAOYAI',
-      location: 'Khao Yai, Thailand',
-      type: 'exterior'
-    },
-    {
-      src: 'KHUEN POOL VILLA.jpg',
-      title: 'KHUEN POOL VILLA',
-      location: 'Ranong, Thailand',
-      type: 'interior'
-    },
-    {
-      src: 'PARK 51.png',
-      title: 'PARK 51',
-      location: 'Bangkok, Thailand',
-      type: 'exterior'
-    },
-    {
-      src: 'DOI CHANG VILLA.jpg',
-      title: 'DOI CHANG',
-      location: 'Doi Chang, Chiangrai',
-      type: 'exterior'
-    },
-    {
-      src: 'PPP GEMS.png',
-      title: 'PPP GEMS',
-      location: 'Everywhere',
-      type: 'interior'
+  // Fetch data only once when component mounts
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/project')
+      setProjectData(response.data.projects)
+    } catch (error) {
+      console.error('Error fetching projects:', error)
     }
-  ]
+  }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   // Filter projects when activeFilter changes
   useEffect(() => {
@@ -91,17 +32,18 @@ export default function Home() {
       setFilteredProjects(projects)
     } else {
       const filtered = projects.filter(
-        (project) => project.type === activeFilter
+        (project) => project.category === activeFilter
       )
       setFilteredProjects(filtered)
     }
-  }, [activeFilter])
+  }, [activeFilter, projects])
 
   // Handle filter click
   const handleFilterClick = (filter: SetStateAction<string>) => {
     setActiveFilter(filter)
+
     // Close mobile filter menu after selection on mobile
-    if (window.innerWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setIsFilterOpen(false)
     }
   }
@@ -295,7 +237,8 @@ export default function Home() {
           {filteredProjects.map((project, index) => (
             <ImageFrame
               key={index}
-              src={`/assets/projects/${project.src}`}
+              slug={project.slug}
+              coverImage={project.coverImage}
               title={project.title}
               location={project.location}
             />

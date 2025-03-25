@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/ssr": "github:supabase/ssr",
+    "@supabase/supabase-js": "^2.49.3",
     "argon2": "^0.41.1",
     "axios": "^1.8.4",
     "boxicons": "^2.1.4",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.0",
+    "multer": "^1.4.5-lts.2",
     "next": "15.2.3",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

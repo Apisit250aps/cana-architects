@@ -1,150 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { MongoClient, ObjectId } from 'mongodb'
-import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server';
+import { connectDB } from '@/lib/database';
+import { Project } from '@/models/projects';
 
-// Environment variables
-const MONGODB_URI = process.env.MONGODB_URI || '';
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+import { isValidObjectId } from 'mongoose';
+import { uploadToStorage } from '@/lib/utils';
 
-// Initialize MongoDB client
-const client = new MongoClient(MONGODB_URI);
-
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Connect to database before processing reques
 
 export async function POST(req: NextRequest) {
   try {
-    // Parse the form data
+    // Connect to database
+    await connectDB();
+    
+    // Parse form data
     const formData = await req.formData();
     
-    // Extract data
+    // Extract project ID and validate
     const projectId = formData.get('projectId') as string;
-    const galleryImage = formData.get('galleryImage') as File;
-    
-    if (!projectId || !galleryImage) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!projectId || !isValidObjectId(projectId)) {
+      return NextResponse.json({ error: 'Valid project ID is required' }, { status: 400 });
     }
     
-    // Connect to MongoDB
-    await client.connect();
-    const db = client.db('architecture-portfolio');
-    const projectsCollection = db.collection('projects');
-    
-    // Find the project to get the slug
-    const project = await projectsCollection.findOne({ _id: new ObjectId(projectId) });
-    
+    // Find project by ID
+    const project = await Project.findById(projectId);
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
     
-    // Upload gallery image to Supabase
-    const fileExt = galleryImage.name.split('.').pop();
-    const timestamp = Date.now();
-    const fileName = `${project.slug}-gallery-${timestamp}.${fileExt}`;
-    
-    // Convert File to ArrayBuffer
-    const arrayBuffer = await galleryImage.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase
-      .storage
-      .from('projects')
-      .upload(`gallery/${fileName}`, buffer, {
-        contentType: galleryImage.type,
-        upsert: true
-      });
-    
-    if (uploadError) {
-      throw new Error(`Failed to upload gallery image: ${uploadError.message}`);
+    // Extract gallery image
+    const galleryImageFile = formData.get('galleryImage') as File | null;
+    if (!galleryImageFile) {
+      return NextResponse.json({ error: 'Gallery image is required' }, { status: 400 });
     }
     
-    // Get public URL
-    const { data: urlData } = supabase
-      .storage
-      .from('projects')
-      .getPublicUrl(`gallery/${fileName}`);
+    // Convert image File to Buffer and upload
+    const galleryImageBuffer = Buffer.from(await galleryImageFile.arrayBuffer());
+    const galleryImageName = `projects/${project.slug}/gallery-${Date.now()}-${galleryImageFile.name.replace(/\s/g, '-')}`;
     
-    const galleryImageUrl = urlData.publicUrl;
+    // Upload image to storage
+    const galleryImageUrl = await uploadToStorage(galleryImageBuffer, galleryImageName, galleryImageFile.type);
     
-    // Update project document with new gallery image
-    await projectsCollection.updateOne(
-      { _id: new ObjectId(projectId) },
-      { 
-        $push: { galleryImages: galleryImageUrl },
-        $set: { updatedAt: new Date() }
-      }
-    );
+    // Add gallery image URL to project
+    project.galleryImages.push(galleryImageUrl);
+    await project.save();
     
-    return NextResponse.json({ 
-      success: true, 
+    // Return success response
+    return NextResponse.json({
       message: 'Gallery image uploaded successfully',
       imageUrl: galleryImageUrl
-    });
+    }, { status: 200 });
     
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Error uploading gallery image:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to upload gallery image' 
     }, { status: 500 });
-  } finally {
-    // Close MongoDB connection
-    await client.close();
   }
 }
 
-export async function DELETE(req: NextRequest) {
-  try {
-    // Get URL parameters
-    const { searchParams } = new URL(req.url);
-    const projectId = searchParams.get('projectId');
-    const imageUrl = searchParams.get('imageUrl');
-    
-    if (!projectId || !imageUrl) {
-      return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
-    }
-    
-    // Connect to MongoDB
-    await client.connect();
-    const db = client.db('architecture-portfolio');
-    const projectsCollection = db.collection('projects');
-    
-    // Update project to remove the image from galleryImages
-    await projectsCollection.updateOne(
-      { _id: new ObjectId(projectId) },
-      { 
-        $pull: { galleryImages: imageUrl },
-        $set: { updatedAt: new Date() }
-      }
-    );
-    
-    // Extract file path from URL
-    const urlParts = imageUrl.split('/');
-    const filePath = `gallery/${urlParts[urlParts.length - 1]}`;
-    
-    // Delete file from Supabase storage
-    const { error: deleteError } = await supabase
-      .storage
-      .from('projects')
-      .remove([filePath]);
-    
-    if (deleteError) {
-      console.warn('Failed to delete file from storage:', deleteError);
-    }
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Gallery image deleted successfully' 
-    });
-    
-  } catch (error) {
-    console.error('API Error:', error);
-    return NextResponse.json({ 
-      error: error instanceof Error ? error.message : 'Failed to delete gallery image' 
-    }, { status: 500 });
-  } finally {
-    // Close MongoDB connection
-    await client.close();
-  }
-}
+// For handling large uploads
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

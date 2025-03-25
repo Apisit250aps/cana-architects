@@ -56,5 +56,4 @@ projectSchema.pre<IProject>('save', function (next) {
   next()
 })
 
-export const Project =
-  models.Project || model<IProject>('projects', projectSchema)
+export const Project = models.projects || model<IProject>('projects', projectSchema)
