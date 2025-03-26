@@ -96,7 +96,7 @@ export default function ClientSideCarousel({
         className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-12 h-12 rounded-full flex items-center justify-center z-20"
         aria-label="Previous slide"
       >
-        /
+        <i className="bx bx-chevron-left"></i>
       </button>
 
       <button
@@ -104,7 +104,7 @@ export default function ClientSideCarousel({
         className="absolute right-4 top-1/2 -translate-y-1/2 text-white w-12 h-12 rounded-full flex items-center justify-center z-20"
         aria-label="Next slide"
       >
-        /
+        <i className="bx bx-chevron-right"></i>
       </button>
 
       {/* Pagination indicators */}

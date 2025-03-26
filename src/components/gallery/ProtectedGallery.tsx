@@ -175,14 +175,14 @@ export default function ProtectedGallery({
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black rounded-full p-3  transition-colors"
             aria-label="Previous image"
           >
-            /
+            <i className="bx bx-chevron-left"></i>
           </button>
           <button
             onClick={goToNextImage}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-black rounded-full p-3  transition-colors"
             aria-label="Next image"
           >
-            /
+             <i className="bx bx-chevron-right"></i>
           </button>
 
           {/* Thumbnail navigation (optional, for larger screens) */}
