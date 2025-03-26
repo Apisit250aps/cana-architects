@@ -24,7 +24,7 @@ export interface IProject extends Document {
   updatedAt: Date
 }
 
-const projectSchema = new Schema(
+const projectSchema = new Schema<IProject>(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
