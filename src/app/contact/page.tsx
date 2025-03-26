@@ -16,9 +16,9 @@ export default function ContactPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center max-w-5xl w-full">
           {/* Left column - Image */}
-          <div className="relative aspect-[4/5] w-full max-w-sm mx-auto">
+          <div className="relative aspect-[1/1] w-full max-w-sm mx-auto">
             <Image
-              src="/assets/logo/cana-architects-logo.png"
+              src="/assets/logo/squre-logo.png"
               alt="Cana Architects Logo"
               fill
               className="object-cover rounded-lg"
@@ -60,7 +60,7 @@ export default function ContactPage() {
               </h2>
               <div className="flex justify-center md:justify-start space-x-6">
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/cana.architects"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -70,19 +70,9 @@ export default function ContactPage() {
                     <span className="text-sm mt-1">Facebook</span>
                   </span>
                 </a>
+
                 <a
-                  href="https://instagram.com"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="flex flex-col items-center">
-                    <i className="bx bxl-instagram text-2xl"></i>
-                    <span className="text-sm mt-1">Instagram</span>
-                  </span>
-                </a>
-                <a
-                  href="https://tiktok.com"
+                  href="https://www.tiktok.com/@cana.architects"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -92,10 +82,21 @@ export default function ContactPage() {
                     <span className="text-sm mt-1">TikTok</span>
                   </span>
                 </a>
+                <a
+                  href="https://www.instagram.com/cana.architects/"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="flex flex-col items-center">
+                    <i className="bx bxl-instagram text-2xl"></i>
+                    <span className="text-sm mt-1">Instagram</span>
+                  </span>
+                </a>
               </div>
             </div>
 
-            <div className="space-y-6">
+            {/* <div className="space-y-6">
               <h2 className="text-2xl font-light text-gray-800 border-b pb-2 inline-block">
                 Business Hours
               </h2>
@@ -104,11 +105,9 @@ export default function ContactPage() {
                 <p>Saturday: By appointment</p>
                 <p>Sunday: Closed</p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
-
-        
       </main>
 
       <Footer />

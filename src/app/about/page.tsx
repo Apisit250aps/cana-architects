@@ -13,9 +13,9 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
           {/* Left column - Image */}
-          <div className="relative aspect-[4/5] w-full max-w-md mx-auto md:mx-0 overflow-hidden">
+          <div className="relative aspect-[4/3] w-full max-w-md mx-auto md:mx-0 overflow-hidden">
             <Image
-              src="/assets/logo/cana-architects-logo.png"
+              src="/assets/profile/bank-88.png"
               alt="Cana Architects"
               fill
               className="object-cover rounded-lg shadow-md transition-transform duration-500 hover:scale-105"
@@ -59,7 +59,7 @@ export default function AboutPage() {
         </div>
 
         {/* Philosophy Section */}
-        <section className="max-w-6xl mx-auto mt-24 px-4">
+        {/* <section className="max-w-6xl mx-auto mt-24 px-4">
           <h2 className="text-3xl font-light tracking-tight mb-8 pb-2 border-b">
             Our Philosophy
           </h2>
@@ -88,10 +88,10 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Services Section */}
-        <section className="max-w-6xl mx-auto mt-24 px-4">
+        {/* <section className="max-w-6xl mx-auto mt-24 px-4">
           <h2 className="text-3xl font-light tracking-tight mb-8 pb-2 border-b">
             Our Services
           </h2>
@@ -118,7 +118,7 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
 
       <Footer />
