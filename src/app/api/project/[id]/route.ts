@@ -8,14 +8,15 @@ import { deleteFromStorage, uploadToStorage } from '@/lib/utils'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+ { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Connect to the database
     await connectDB()
 
     // Get project ID from params
-    const projectId = params.id
+    const { id } = await params
+    const projectId = id
 
     if (!projectId) {
       return NextResponse.json(
@@ -48,14 +49,15 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Connect to database
     await connectDB()
 
     // Get project ID from params
-    const projectId = params.id
+    const { id } = await params
+    const projectId = id
 
     if (!projectId) {
       return NextResponse.json(

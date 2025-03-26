@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import DraggableImage from '../../components/DraggableImage'
 import TagInput from '../../components/TagInput'
 
@@ -37,11 +37,8 @@ interface Toast {
   visible: boolean
 }
 
-export default function EditProjectPage({
-  params
-}: {
-  params: { id: string }
-}) {
+export default function EditProjectPage() {
+  const params = useParams()
   const projectId = params.id
   const router = useRouter()
 
@@ -317,7 +314,7 @@ export default function EditProjectPage({
       const formData = new FormData()
 
       // Add project ID
-      formData.append('projectId', projectId)
+      formData.append('projectId', projectId as string)
 
       // Add project details
       Object.entries(projectDetails).forEach(([key, value]) => {
@@ -356,7 +353,7 @@ export default function EditProjectPage({
       const newGalleryImages = projectImages.filter((image) => image.file)
       if (newGalleryImages.length > 0) {
         showToast('Now uploading new gallery images...', 'success')
-        await uploadNewGalleryImages(projectId)
+        await uploadNewGalleryImages(projectId as string)
       } else {
         // Redirect to project page after a short delay
         setTimeout(() => {
