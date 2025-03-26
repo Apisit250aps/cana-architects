@@ -90,12 +90,12 @@ export default function ProtectedGallery({
 
   return (
     <div ref={galleryRef} className="select-none">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0.5 relative lg:px-32 py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0.5 relative lg:px-45 py-10">
         {images.map((image, index) => {
           return (
             <div
               key={index}
-              className="relative aspect-[4/3] w-full group cursor-pointer"
+              className="relative aspect-[16/9] w-full group cursor-pointer"
               onClick={() => openCarousel(index)}
             >
               <div className="absolute inset-0 z-10 bg-transparent pointer-events-none"></div>

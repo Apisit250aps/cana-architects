@@ -3,7 +3,7 @@ import { Project } from '@/models/projects'
 
 import ClientSideCarousel from './components/ClientSideCarousel'
 import Footer from '@/components/navigate/Footer'
-import ProtectedGallery from '@/components/gallery/ProtectedGallery';
+import ProtectedGallery from '@/components/gallery/ProtectedGallery'
 export default async function ProjectDetail({
   params
 }: {
@@ -27,7 +27,7 @@ export default async function ProjectDetail({
     <>
       <div className="container mx-auto pt-7 px-0 lg:px-0 max-w-screen-xl">
         {/* Flicking Carousel */}
-        <div className="relative mb-7">
+        <div className="relative mb-7 px-0 lg:px-15">
           <ClientSideCarousel
             images={images.slice(0, 10)}
             title={project.title}
