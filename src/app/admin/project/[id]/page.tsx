@@ -1,47 +1,50 @@
 'use client'
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import DraggableImage from '../components/DraggableImage';
-import TagInput from '../components/TagInput';
+import DraggableImage from '../../components/DraggableImage'
+import TagInput from '../../components/TagInput'
 
-
-
-
-type ProjectCategory = 'exterior' | 'interior' | 'product';
+type ProjectCategory = 'exterior' | 'interior' | 'product'
 
 interface ImageItem {
-  id: string;
-  src: string;
-  file: File;
+  id: string
+  src: string
+  file?: File
+  url?: string // For existing images
 }
 
 interface ProjectDetails {
-  title: string;
-  location: string;
-  type: string;
-  category: ProjectCategory;
-  program: string;
-  client: string;
-  siteArea: string;
-  builtArea: string;
-  design: string;
-  completion: string;
-  description: string;
-  tags: string[];
+  title: string
+  location: string
+  type: string
+  category: ProjectCategory
+  program: string
+  client: string
+  siteArea: string
+  builtArea: string
+  design: string
+  completion: string
+  description: string
+  tags: string[]
 }
 
 interface Toast {
-  message: string;
-  type: 'success' | 'error';
-  visible: boolean;
+  message: string
+  type: 'success' | 'error'
+  visible: boolean
 }
 
-const AdminUploadPage = () => {
+export default function EditProjectPage({
+  params
+}: {
+  params: { id: string }
+}) {
+  const projectId = params.id
   const router = useRouter()
-  
+
   // State for project details
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>({
     title: '',
@@ -61,12 +64,13 @@ const AdminUploadPage = () => {
   // State for images
   const [coverImage, setCoverImage] = useState<ImageItem | null>(null)
   const [projectImages, setProjectImages] = useState<ImageItem[]>([])
-  
+  const [removedImages, setRemovedImages] = useState<string[]>([])
+
   // State for loading and errors
+  const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [projectId, setProjectId] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [toast, setToast] = useState<Toast>({
     message: '',
@@ -74,16 +78,81 @@ const AdminUploadPage = () => {
     visible: false
   })
 
+  // Fetch project data
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        const response = await fetch(`/api/project/${projectId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch project data')
+        }
+
+        const data = await response.json()
+        const project = data.project
+
+        // Set project details
+        setProjectDetails({
+          title: project.title || '',
+          location: project.location || '',
+          type: project.type || '',
+          category: project.category || 'exterior',
+          program: project.program || '',
+          client: project.client || '',
+          siteArea: project.siteArea || '',
+          builtArea: project.builtArea || '',
+          design: project.design || '',
+          completion: project.completion || '',
+          description: project.description || '',
+          tags: project.tags || []
+        })
+
+        // Set cover image
+        if (project.coverImage) {
+          setCoverImage({
+            id: 'cover',
+            src: project.coverImage,
+            url: project.coverImage
+          })
+        }
+
+        // Set project images
+        if (project.galleryImages && project.galleryImages.length > 0) {
+          setProjectImages(
+            project.galleryImages.map((url: string, index: number) => ({
+              id: `existing-image-${index}`,
+              src: url,
+              url: url
+            }))
+          )
+        }
+
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Error fetching project data:', error)
+        showToast('Failed to load project data. Please try again.', 'error')
+        setIsLoading(false)
+      }
+    }
+
+    fetchProjectData()
+  }, [projectId])
+
   // Handle input changes for project details
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
     setProjectDetails((prev) => ({ ...prev, [name]: value }))
-    
+
     // Clear error for this field if it exists
     if (errors[name]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev }
         delete newErrors[name]
         return newErrors
@@ -99,14 +168,17 @@ const AdminUploadPage = () => {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp']
     if (!validTypes.includes(file.type)) {
-      showToast('Invalid file type. Please use JPG, PNG or WebP format.', 'error')
+      showToast(
+        'Invalid file type. Please use JPG, PNG or WebP format.',
+        'error'
+      )
       return
     }
 
-    // Validate file size (5MB max)
+    // Validate file size (64MB max)
     const maxSize = 64 * 1024 * 1024
     if (file.size > maxSize) {
-      showToast('File too large. Maximum size is 5MB.', 'error')
+      showToast('File too large. Maximum size is 64MB.', 'error')
       return
     }
 
@@ -116,10 +188,10 @@ const AdminUploadPage = () => {
       src: imageUrl,
       file
     })
-    
+
     // Clear error if it exists
     if (errors.coverImage) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev }
         delete newErrors.coverImage
         return newErrors
@@ -139,24 +211,27 @@ const AdminUploadPage = () => {
     const maxSize = 64 * 1024 * 1024
     const invalidFiles: string[] = []
 
-    const validFiles = Array.from(files).filter(file => {
+    const validFiles = Array.from(files).filter((file) => {
       if (!validTypes.includes(file.type)) {
         invalidFiles.push(`${file.name}: Invalid file type`)
         return false
       }
       if (file.size > maxSize) {
-        invalidFiles.push(`${file.name}: File too large (max 5MB)`)
+        invalidFiles.push(`${file.name}: File too large (max 64MB)`)
         return false
       }
       return true
     })
 
     if (invalidFiles.length > 0) {
-      showToast(`Some files were not added: ${invalidFiles.join(', ')}`, 'error')
+      showToast(
+        `Some files were not added: ${invalidFiles.join(', ')}`,
+        'error'
+      )
     }
 
     const newImages: ImageItem[] = validFiles.map((file) => ({
-      id: `image-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `new-image-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       src: URL.createObjectURL(file),
       file
     }))
@@ -166,7 +241,7 @@ const AdminUploadPage = () => {
 
   // Move image (reorder)
   const moveImage = useCallback((dragIndex: number, hoverIndex: number) => {
-    setProjectImages(prevImages => {
+    setProjectImages((prevImages) => {
       const dragImage = prevImages[dragIndex]
       const newImages = [...prevImages]
       newImages.splice(dragIndex, 1)
@@ -176,47 +251,57 @@ const AdminUploadPage = () => {
   }, [])
 
   // Remove image
-  const removeImage = useCallback((id: string) => {
-    setProjectImages(prev => prev.filter(image => image.id !== id))
-  }, [])
+  const removeImage = useCallback(
+    (id: string) => {
+      // Check if it's an existing image
+      const imageToRemove = projectImages.find((img) => img.id === id)
+      if (imageToRemove && imageToRemove.url) {
+        // Add to removedImages list to delete from server later
+        setRemovedImages((prev) => [...prev, imageToRemove.url as string])
+      }
+
+      setProjectImages((prev) => prev.filter((image) => image.id !== id))
+    },
+    [projectImages]
+  )
 
   // Show toast notification
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type, visible: true })
-    
+
     // Auto-hide toast after 5 seconds
     setTimeout(() => {
-      setToast(prev => ({ ...prev, visible: false }))
+      setToast((prev) => ({ ...prev, visible: false }))
     }, 5000)
   }
 
   // Validate form before submission
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
-    
+
     // Required fields
     if (!projectDetails.title.trim()) {
       newErrors.title = 'Title is required'
     }
-    
+
     if (!projectDetails.location.trim()) {
       newErrors.location = 'Location is required'
     }
-    
+
     if (!projectDetails.description.trim()) {
       newErrors.description = 'Description is required'
     }
-    
+
     if (!coverImage) {
       newErrors.coverImage = 'Cover image is required'
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  // Handle basic info submission
-  const handleSubmitBasicInfo = async (e: React.FormEvent) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Validate form
@@ -231,6 +316,9 @@ const AdminUploadPage = () => {
       // Create FormData object
       const formData = new FormData()
 
+      // Add project ID
+      formData.append('projectId', projectId)
+
       // Add project details
       Object.entries(projectDetails).forEach(([key, value]) => {
         if (key === 'tags' && Array.isArray(value)) {
@@ -240,100 +328,116 @@ const AdminUploadPage = () => {
         }
       })
 
-      // Add cover image
-      if (coverImage) {
+      // Add cover image if new
+      if (coverImage && coverImage.file) {
         formData.append('coverImage', coverImage.file)
       }
 
-      // Submit form data to API (only basic info and cover image)
-      const response = await fetch('/api/project', {
-        method: 'POST',
+      // Add removed images
+      if (removedImages.length > 0) {
+        formData.append('removedImages', JSON.stringify(removedImages))
+      }
+
+      // Submit form data to API
+      const response = await fetch(`/api/project/${projectId}`, {
+        method: 'PUT',
         body: formData
       })
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create project');
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update project')
       }
 
-      const data = await response.json();
-      
-      // Save the project ID for gallery uploads
-      setProjectId(data.project._id);
-      
-      showToast('Project details saved! Now uploading gallery images...', 'success')
-      
-      // Upload gallery images
-      if (projectImages.length > 0) {
-        await uploadGalleryImages(data.project._id);
+      const data = await response.json()
+      showToast('Project details updated successfully!', 'success')
+
+      // Check if there are new gallery images to upload
+      const newGalleryImages = projectImages.filter((image) => image.file)
+      if (newGalleryImages.length > 0) {
+        showToast('Now uploading new gallery images...', 'success')
+        await uploadNewGalleryImages(projectId)
       } else {
-        showToast('Project created successfully! No gallery images to upload.', 'success')
-        
-        // Redirect to project page
+        // Redirect to project page after a short delay
         setTimeout(() => {
           if (data.project.slug) {
-            router.push(`/project/${data.project.slug}`)
+            router.push(`/${data.project.slug}`)
+          } else {
+            router.push(`/project/${projectId}`)
           }
         }, 2000)
       }
-      
     } catch (error) {
-      console.error('Error submitting form:', error)
+      console.error('Error updating project:', error)
       showToast(
-        error instanceof Error ? error.message : 'Failed to create project. Please try again.',
+        error instanceof Error
+          ? error.message
+          : 'Failed to update project. Please try again.',
         'error'
       )
     } finally {
       setIsSubmitting(false)
     }
   }
-  
-  // Upload gallery images
-  const uploadGalleryImages = async (projectId: string) => {
+
+  // Upload new gallery images
+  const uploadNewGalleryImages = async (projectId: string) => {
     setIsUploading(true)
     setUploadProgress(0)
-    
-    const totalImages = projectImages.length;
-    let uploadedCount = 0;
-    
+
+    const newImages = projectImages.filter((image) => image.file)
+    const totalImages = newImages.length
+    let uploadedCount = 0
+
     try {
-      // Upload each image individually and update progress
-      for (const image of projectImages) {
-        const formData = new FormData();
-        formData.append('projectId', projectId);
-        formData.append('galleryImage', image.file);
-        
+      // Upload each new image individually and update progress
+      for (const image of newImages) {
+        if (!image.file) continue
+
+        const formData = new FormData()
+        formData.append('projectId', projectId)
+        formData.append('galleryImage', image.file)
+
         const response = await fetch('/api/project/gallery', {
           method: 'POST',
           body: formData
-        });
-        
+        })
+
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to upload gallery image');
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to upload gallery image')
         }
-        
-        uploadedCount++;
-        setUploadProgress(Math.round((uploadedCount / totalImages) * 100));
+
+        uploadedCount++
+        setUploadProgress(Math.round((uploadedCount / totalImages) * 100))
       }
-      
-      showToast('All gallery images uploaded successfully!', 'success');
-      
+
+      showToast('All gallery images uploaded successfully!', 'success')
+
       // Redirect to project page
       setTimeout(() => {
-        router.push(`admin/project/${projectId}`);
-      }, 2000);
-      
+        router.push(`/project/${projectId}`)
+      }, 2000)
     } catch (error) {
-      console.error('Error uploading gallery images:', error);
+      console.error('Error uploading gallery images:', error)
       showToast(
-        error instanceof Error ? error.message : 'Failed to upload some gallery images. Please try again.',
+        error instanceof Error
+          ? error.message
+          : 'Failed to upload some gallery images. Please try again.',
         'error'
-      );
+      )
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="loading loading-spinner loading-lg"></div>
+      </div>
+    )
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -348,58 +452,54 @@ const AdminUploadPage = () => {
 
       <div className="card">
         <div className="card-body">
-          <div className="card-title">Create New Project</div>
-          
-          {projectId ? (
+          <div className="card-title">Edit Project</div>
+
+          {isUploading ? (
             <div className="card bg-base-100 shadow-sm p-6">
-              <h2 className="text-xl font-bold mb-4">Uploading Gallery Images</h2>
-              
-              {isUploading ? (
-                <div className="space-y-4">
-                  <progress 
-                    className="progress progress-primary w-full" 
-                    value={uploadProgress} 
-                    max="100"
-                  ></progress>
-                  <p className="text-center">
-                    Uploading images: {uploadProgress}% complete
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p className="mb-4">All uploads complete!</p>
-                  <button 
-                    className="btn btn-primary"
-                    onClick={() => router.push(`/projects/${projectId}`)}
-                  >
-                    View Project
-                  </button>
-                </div>
-              )}
+              <h2 className="text-xl font-bold mb-4">
+                Uploading New Gallery Images
+              </h2>
+              <div className="space-y-4">
+                <progress
+                  className="progress progress-primary w-full"
+                  value={uploadProgress}
+                  max="100"
+                ></progress>
+                <p className="text-center">
+                  Uploading images: {uploadProgress}% complete
+                </p>
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmitBasicInfo} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Cover Image Section */}
               <div className="card bg-base-100 shadow-sm">
                 <div className="card-body">
                   <h2 className="card-title">Cover Image</h2>
-                  <p className="text-sm opacity-70">Main image displayed on the home page</p>
+                  <p className="text-sm opacity-70">
+                    Main image displayed on the home page
+                  </p>
 
                   <div className="form-control w-full mb-4">
                     <label className="label">
-                      <span className="label-text">Select Image</span>
-                      <span className="label-text-alt text-error">*Required</span>
+                      <span className="label-text">Change Image</span>
+                      <span className="label-text-alt text-error">
+                        *Required
+                      </span>
                     </label>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
                       onChange={handleCoverImageUpload}
-                      className={`file-input file-input-bordered w-full ${errors.coverImage ? 'input-error' : ''}`}
-                      required={!coverImage}
+                      className={`file-input file-input-bordered w-full ${
+                        errors.coverImage ? 'input-error' : ''
+                      }`}
                     />
                     {errors.coverImage && (
                       <label className="label">
-                        <span className="label-text-alt text-error">{errors.coverImage}</span>
+                        <span className="label-text-alt text-error">
+                          {errors.coverImage}
+                        </span>
                       </label>
                     )}
                   </div>
@@ -437,18 +537,18 @@ const AdminUploadPage = () => {
                   )}
                 </div>
               </div>
+
               {/* Project Images Section */}
               <div className="card bg-base-100 shadow-sm">
                 <div className="card-body">
                   <h2 className="card-title">Gallery Images</h2>
                   <p className="text-sm opacity-70">
-                    Images displayed on the project detail page{' '}
-                    <span className="text-info">* Will be uploaded after saving basic info</span>
+                    Images displayed on the project detail page
                   </p>
 
                   <div className="form-control w-full mb-6">
                     <label className="label">
-                      <span className="label-text">Select Images</span>
+                      <span className="label-text">Add More Images</span>
                     </label>
                     <input
                       type="file"
@@ -462,7 +562,7 @@ const AdminUploadPage = () => {
                   {projectImages.length > 0 && (
                     <div>
                       <h3 className="text-lg font-medium mb-3">
-                        Preview & Arrange Images ({projectImages.length} selected)
+                        Manage Gallery Images ({projectImages.length})
                       </h3>
                       <p className="text-sm opacity-70 mb-4">
                         Drag images to reorder them. The order will be preserved
@@ -484,7 +584,7 @@ const AdminUploadPage = () => {
                   )}
                 </div>
               </div>
-              
+
               {/* Project Details Section */}
               <div className="card bg-base-100 shadow-sm">
                 <div className="card-body">
@@ -493,19 +593,25 @@ const AdminUploadPage = () => {
                     <div className="form-control w-full">
                       <label className="label">
                         <span className="label-text">Title</span>
-                        <span className="label-text-alt text-error">*Required</span>
+                        <span className="label-text-alt text-error">
+                          *Required
+                        </span>
                       </label>
                       <input
                         type="text"
                         name="title"
                         value={projectDetails.title}
                         onChange={handleInputChange}
-                        className={`input input-bordered w-full ${errors.title ? 'input-error' : ''}`}
+                        className={`input input-bordered w-full ${
+                          errors.title ? 'input-error' : ''
+                        }`}
                         required
                       />
                       {errors.title && (
                         <label className="label">
-                          <span className="label-text-alt text-error">{errors.title}</span>
+                          <span className="label-text-alt text-error">
+                            {errors.title}
+                          </span>
                         </label>
                       )}
                     </div>
@@ -513,19 +619,25 @@ const AdminUploadPage = () => {
                     <div className="form-control w-full">
                       <label className="label">
                         <span className="label-text">Location</span>
-                        <span className="label-text-alt text-error">*Required</span>
+                        <span className="label-text-alt text-error">
+                          *Required
+                        </span>
                       </label>
                       <input
                         type="text"
                         name="location"
                         value={projectDetails.location}
                         onChange={handleInputChange}
-                        className={`input input-bordered w-full ${errors.location ? 'input-error' : ''}`}
+                        className={`input input-bordered w-full ${
+                          errors.location ? 'input-error' : ''
+                        }`}
                         required
                       />
                       {errors.location && (
                         <label className="label">
-                          <span className="label-text-alt text-error">{errors.location}</span>
+                          <span className="label-text-alt text-error">
+                            {errors.location}
+                          </span>
                         </label>
                       )}
                     </div>
@@ -599,7 +711,7 @@ const AdminUploadPage = () => {
                         placeholder="e.g. 300 sq.m."
                       />
                     </div>
-                    
+
                     <div className="form-control w-full">
                       <label className="label">
                         <span className="label-text">Design Year</span>
@@ -613,7 +725,7 @@ const AdminUploadPage = () => {
                         placeholder="e.g. 2023"
                       />
                     </div>
-                    
+
                     <div className="form-control w-full">
                       <label className="label">
                         <span className="label-text">Completion Year</span>
@@ -648,22 +760,26 @@ const AdminUploadPage = () => {
                         <option value="product">Product</option>
                       </select>
                     </div>
-                    
-                    <TagInput 
-                      value={projectDetails.tags} 
-                      onChange={(tags) => 
-                        setProjectDetails(prev => ({ ...prev, tags }))
-                      } 
+
+                    <TagInput
+                      value={projectDetails.tags}
+                      onChange={(tags) =>
+                        setProjectDetails((prev) => ({ ...prev, tags }))
+                      }
                     />
                   </div>
-                  
+
                   <div className="mt-6">
                     <label className="label">
                       <span className="label-text">Description</span>
-                      <span className="label-text-alt text-error">*Required</span>
+                      <span className="label-text-alt text-error">
+                        *Required
+                      </span>
                     </label>
                     <textarea
-                      className={`textarea textarea-bordered h-32 w-full ${errors.description ? 'textarea-error' : ''}`}
+                      className={`textarea textarea-bordered h-32 w-full ${
+                        errors.description ? 'textarea-error' : ''
+                      }`}
                       placeholder="Project description..."
                       name="description"
                       value={projectDetails.description}
@@ -672,34 +788,38 @@ const AdminUploadPage = () => {
                     ></textarea>
                     {errors.description && (
                       <label className="label">
-                        <span className="label-text-alt text-error">{errors.description}</span>
+                        <span className="label-text-alt text-error">
+                          {errors.description}
+                        </span>
                       </label>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               {/* Submit Button */}
               <div className="flex justify-end gap-4">
-                <button 
-                  type="button" 
-                  className="btn btn-ghost" 
+                <button
+                  type="button"
+                  className="btn btn-ghost"
                   onClick={() => router.back()}
                   disabled={isSubmitting}
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
-                  className="btn btn-primary" 
+                <button
+                  type="submit"
+                  className="btn btn-primary"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
                     <>
                       <span className="loading loading-spinner loading-xs mr-2"></span>
-                      Saving Basic Info...
+                      Saving Changes...
                     </>
-                  ) : 'Save Basic Info & Continue'}
+                  ) : (
+                    'Save Changes'
+                  )}
                 </button>
               </div>
             </form>
@@ -709,5 +829,3 @@ const AdminUploadPage = () => {
     </DndProvider>
   )
 }
-
-export default AdminUploadPage

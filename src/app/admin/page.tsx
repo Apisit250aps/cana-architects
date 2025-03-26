@@ -39,7 +39,7 @@ export default async function AdminProject() {
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{project.title}</div>
+                        <a href={`/admin/project/${project._id}`} className="font-bold">{project.title}</a>
                         <div className="text-sm opacity-50">
                           {project.location}
                         </div>
