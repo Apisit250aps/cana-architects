@@ -25,10 +25,10 @@ export default function AdminLayout({
         <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
           {/* Sidebar content here */}
           <li>
-            <a href="/admin">Projects</a>
+            <a href={"/admin"}>Projects</a>
           </li>
           <li>
-            <a href="/admin/upload">Upload</a>
+            <a href={"/admin/upload"}>Upload</a>
           </li>
         </ul>
       </div>

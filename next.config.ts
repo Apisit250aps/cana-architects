@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '8mb' // เพิ่มขนาดจาก 1mb เป็น 8mb
     }
   },
+  images:{
+    unoptimized: true
+  }
 };
 
 export default nextConfig;

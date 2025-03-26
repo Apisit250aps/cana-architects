@@ -80,7 +80,6 @@ export default async function ProjectDetail({
         </div>
       </div>
       <ProtectedGallery images={images} title={project.title} />
-      
       <Footer />
     </>
   )

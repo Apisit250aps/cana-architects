@@ -1,7 +1,11 @@
 import React, { useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import Image from 'next/image'
-import { ImageItem } from '@/types/project'
+
+interface ImageItem {
+  id: string
+  src: string
+}
 
 interface DraggableImageProps {
   image: ImageItem

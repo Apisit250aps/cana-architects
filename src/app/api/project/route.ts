@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
   try {
     // Connect to database
     await connectDB();
-    
+    console.log(req)
     // Fetch all projects
     const projects = await Project.find();
     

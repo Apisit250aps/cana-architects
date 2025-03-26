@@ -89,7 +89,7 @@ export default function Home() {
               </li>
               <li>
                 <button
-                  onClick={() => handleFilterClick('all')}
+                  onClick={() => handleFilterClick('project')}
                   className={`text-base lowercase font-extralight hover:text-black ${
                     activeFilter === 'all' ? 'text-black font-light' : ''
                   }`}
