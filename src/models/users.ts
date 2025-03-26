@@ -8,9 +8,10 @@ export interface IUser extends Document {
   role: string;
   createdAt: Date;
   updatedAt: Date;
+  authenticate(password: string): Promise<boolean>;
 }
 
-const userSchema = new Schema(
+const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     password: { type: String, required: true },
@@ -27,4 +28,9 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-export const User = models.User || model<IUser>("users", userSchema);
+// Method: Authenticate user password
+userSchema.methods.authenticate = async function (password: string): Promise<boolean> {
+  return await argon2.verify(this.password, password);
+};
+
+export const User = models.users || model<IUser>("users", userSchema);
