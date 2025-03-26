@@ -8,7 +8,7 @@ import { deleteFromStorage, uploadToStorage } from '@/lib/utils'
 
 export async function GET(
   request: NextRequest,
- { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Connect to the database
@@ -226,6 +226,80 @@ export async function PUT(
       {
         error:
           error instanceof Error ? error.message : 'Failed to update project'
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    // Connect to database
+    await connectDB()
+
+    // Get project ID from params
+    const { id } = await params
+    const projectId = id
+
+    if (!projectId) {
+      return NextResponse.json(
+        { error: 'Project ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Find existing project
+    const existingProject = await Project.findById(projectId)
+
+    if (!existingProject) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+    }
+
+    // Delete cover image
+    if (existingProject.coverImage) {
+      try {
+        // Extract filename from URL
+        const filename = existingProject.coverImage.split('/').pop()
+        if (filename) {
+          await deleteFromStorage(
+            `projects/${existingProject.slug}/${filename}`
+          )
+        }
+      } catch (error) {
+        console.error('Error deleting cover image:', error)
+      }
+    }
+
+    // Delete gallery images
+    if (existingProject.galleryImages.length > 0) {
+      try {
+        for (const imageUrl of existingProject.galleryImages) {
+          const filename = imageUrl.split('/').pop()
+          if (filename) {
+            await deleteFromStorage(
+              `projects/${existingProject.slug}/${filename}`
+            )
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting gallery images:', error)
+      }
+    }
+
+    // Delete project from database
+    await Project.deleteOne({ _id: projectId })
+
+    // Return success response
+    return NextResponse.json({ message: 'Project deleted successfully' })
+  } catch (error) {
+    console.error('Error deleting project:', error)
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : 'Failed to delete project'
       },
       { status: 500 }
     )
