@@ -37,7 +37,7 @@ export default async function ProjectDetail({
         {/* Project Info */}
         <div className="max-w-2xl mx-auto">
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 justify-center">
+          {/* <div className="flex flex-wrap gap-2 justify-center">
             {project.tags.map((tag: string, index: number) => (
               <span
                 key={index}
@@ -46,7 +46,7 @@ export default async function ProjectDetail({
                 {tag}
               </span>
             ))}
-          </div>
+          </div> */}
           {/* Project Details */}
           <div className="space-y-8 pt-5">
             <div className="flex flex-col items-center">
