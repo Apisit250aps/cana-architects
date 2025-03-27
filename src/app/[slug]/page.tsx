@@ -26,8 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     'commercial',
     ...project.tags
   ]
-  const description =
-    'With Meta Tags you can edit and experiment with your content then preview how your webpage will look on Google, Facebook, Twitter and more!'
+  const description = project.description
   const url = `https://canaarchitects.com/${slug}`
   const image = `https://canaarchitects.com/${project.coverImage}`
 
