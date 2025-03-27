@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: 'Cana Architects',
   description:
     'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
-  metadataBase: new URL('https://cana-architects.com'),
+  metadataBase: new URL('https://canaarchitects.com'),
   // Basic metadata
   applicationName: 'Cana Architects',
   authors: [{ name: 'Cana Architects' }],
@@ -35,14 +35,14 @@ export const metadata: Metadata = {
   // OpenGraph metadata
   openGraph: {
     type: 'website',
-    url: 'https://cana-architects.com',
+    url: 'https://canaarchitects.com',
     title: 'Cana Architects',
     description:
       'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
     siteName: 'Cana Architects',
     images: [
       {
-        url: 'https://cana-architects.com/images/og-image.png',
+        url: 'https://canaarchitects.com/assets/logo/squre-logo.png',
         width: 1200,
         height: 630,
         alt: 'Cana Architects'
@@ -56,18 +56,18 @@ export const metadata: Metadata = {
     description:
       'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
     creator: '@canaarchitects',
-    images: ['https://cana-architects.com/images/twitter-image.png']
+    images: ['https://canaarchitects.com/assets/logo/squre-logo.png']
   },
   // Verification
-  verification: {
-    google: 'google-site-verification-code',
-    yandex: 'yandex-verification-code'
-  },
+  // verification: {
+  //   google: 'google-site-verification-code',
+  //   yandex: 'yandex-verification-code'
+  // },
   // Icons
   icons: {
     icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png'
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico'
   }
 }
 

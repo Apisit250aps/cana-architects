@@ -4,6 +4,53 @@ import { Project } from '@/models/projects'
 import ClientSideCarousel from './components/ClientSideCarousel'
 import Footer from '@/components/navigate/Footer'
 import ProtectedGallery from '@/components/gallery/ProtectedGallery'
+
+import { Metadata } from 'next'
+
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+// ฟังก์ชันสร้าง Metadata ตาม slug
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  await connectDB()
+  const project = await Project.findOne({ slug })
+  const title = `Cana Architects — ${project.title}`
+  const keywords = [
+    'architecture',
+    'design',
+    'cana architects',
+    'interior design',
+    'residential',
+    'commercial',
+    ...project.tags
+  ]
+  const description =
+    'With Meta Tags you can edit and experiment with your content then preview how your webpage will look on Google, Facebook, Twitter and more!'
+  const url = `https://canaarchitects.com/${slug}`
+  const image = `https://canaarchitects.com/${project.coverImage}`
+
+  return {
+    title,
+    description,
+    keywords,
+    openGraph: {
+      type: 'website',
+      url,
+      title,
+      description,
+      images: [{ url: image }]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image]
+    }
+  }
+}
+
 export default async function ProjectDetail({
   params
 }: {
