@@ -36,14 +36,14 @@ export default function ContactPage() {
                 <div className="flex flex-col space-y-1">
                   <span className="font-medium text-gray-800">Email</span>
                   <a
-                    href="mailto:canaarchitects.works@gmail.com"
+                    href="mailto:cana@canaarchitects.com"
                     className="hover:text-gray-900 transition-colors"
                   >
-                    canaarchitects.works@gmail.com
+                    cana@canaarchitects.com
                   </a>
                 </div>
                 <div className="flex flex-col space-y-1">
-                  <span className="font-medium text-gray-800">Phone</span>
+                  <span className="font-medium text-gray-800">Tel.</span>
                   <a
                     href="tel:+66 11492444"
                     className="hover:text-gray-900 transition-colors"
