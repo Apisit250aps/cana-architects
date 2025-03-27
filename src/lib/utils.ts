@@ -34,7 +34,7 @@ export async function uploadToStorage(
   await writeFile(filePath, buffer)
 
   // Return public URL
-  return `/uploads/${fileName}`
+  return `/media/${fileName}`
 }
 
 /**
