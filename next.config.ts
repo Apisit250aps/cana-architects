@@ -6,7 +6,16 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '20mb' // เพิ่มขนาดจาก 1mb เป็น 8mb
     }
-  }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "canaarchitects.com",
+        pathname: "/uploads/**",
+      },
+    ],
+  },
 }
 
 export default nextConfig
