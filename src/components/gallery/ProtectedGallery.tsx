@@ -151,7 +151,7 @@ export default function ProtectedGallery({
 
           {/* Image container */}
           <div className="relative w-full h-full max-w-6xl max-h-screen flex items-center justify-center px-4 sm:px-8 md:px-16 lg:px-24">
-            <div className="relative w-full h-[80vh] select-none">
+            <div className="relative w-full h-[90vh] select-none">
               <Image
                 src={images[currentImageIndex]}
                 alt={`${title} - Image ${currentImageIndex + 1}`}
@@ -168,7 +168,6 @@ export default function ProtectedGallery({
               </div>
             </div>
           </div>
-
           {/* Navigation buttons */}
           <button
             onClick={goToPrevImage}
@@ -186,7 +185,7 @@ export default function ProtectedGallery({
           </button>
 
           {/* Thumbnail navigation (optional, for larger screens) */}
-          <div className="absolute bottom-4 left-0 right-0 overflow-x-auto px-4 hidden md:flex justify-center space-x-2">
+          {/* <div className="absolute bottom-4 left-0 right-0 overflow-x-auto px-4 hidden md:flex justify-center space-x-2">
             {images.map((thumb, index) => (
               <div
                 key={`thumb-${index}`}
@@ -207,7 +206,7 @@ export default function ProtectedGallery({
                 />
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       )}
     </div>

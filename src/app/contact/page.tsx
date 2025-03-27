@@ -96,7 +96,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* <div className="space-y-6">
+            <div className="space-y-6">
               <h2 className="text-2xl font-light text-gray-800 border-b pb-2 inline-block">
                 Business Hours
               </h2>
@@ -105,7 +105,7 @@ export default function ContactPage() {
                 <p>Saturday: By appointment</p>
                 <p>Sunday: Closed</p>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </main>

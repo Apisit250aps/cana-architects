@@ -321,7 +321,7 @@ const AdminUploadPage = () => {
       
       // Redirect to project page
       setTimeout(() => {
-        router.push(`admin/project/${projectId}`);
+        router.push(`/admin/project/${projectId}`);
       }, 2000);
       
     } catch (error) {

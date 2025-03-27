@@ -141,7 +141,7 @@ export default function AdminProjects() {
       <div className="card-body">
         <div className="flex justify-between items-center mb-6">
           <h5 className="card-title m-0">Projects</h5>
-          <Link href="/admin/projects/new" className="btn btn-primary">
+          <Link href="/admin/upload" className="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -196,7 +196,7 @@ export default function AdminProjects() {
                           </div>
                         </div>
                         <div>
-                          <Link href={`/admin/project/${project._id}`} className="font-bold">
+                          <Link href={`/${project.slug}`} className="font-bold">
                             {project.title}
                           </Link>
                           <div className="text-sm opacity-50">
