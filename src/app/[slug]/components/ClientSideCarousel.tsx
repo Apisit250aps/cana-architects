@@ -81,6 +81,7 @@ export default function ClientSideCarousel({
                 src={image}
                 alt={`${title} - Image ${index + 1}`}
                 fill
+                unoptimized
                 sizes="(max-width: 768px) 100vw, 80vw"
                 className="object-cover"
                 priority={index === 0}

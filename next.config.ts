@@ -8,14 +8,15 @@ const nextConfig: NextConfig = {
     }
   },
   images: {
+    unoptimized: true, // ปิด Image Optimization ของ Next.js
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "canaarchitects.com",
-        pathname: "/uploads/**",
-      },
-    ],
-  },
+        protocol: 'https',
+        hostname: 'canaarchitects.com',
+        pathname: '/uploads/**'
+      }
+    ]
+  }
 }
 
 export default nextConfig

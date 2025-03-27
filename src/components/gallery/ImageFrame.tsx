@@ -22,6 +22,7 @@ export default function ImageFrame({
         src={coverImage}
         alt={coverImage.slice(-3)}
         fill
+        unoptimized
         className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
       />
 

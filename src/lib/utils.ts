@@ -21,7 +21,7 @@ export async function uploadToStorage(
   mimeType: string
 ): Promise<string> {
   // Define uploads directory - adjust based on your project structure
-  const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+  const uploadsDir = path.join(process.cwd(), 'media')
   console.log(mimeType)
   // Create full file path
   const filePath = path.join(uploadsDir, fileName)
