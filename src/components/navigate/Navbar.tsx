@@ -6,7 +6,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   return (
     <div className="sticky top-0 z-50 bg-base-100">
-      <div className="navbar px-5 sm:px-10 lg:px-15 flex flex-col lg:flex-row items-center">
+      <div className="navbar px-3 sm:px-10 lg:px-15 flex flex-col lg:flex-row items-center">
         <div className="navbar-start justify-center lg:justify-start">
           <a href={'/'}>
             <Image
@@ -52,12 +52,12 @@ export default function Navbar() {
         {/* Mobile navigation button */}
         <div className="navbar-end lg:hidden flex flex-row justify-end w-full mt-4">
           <button
-            className="btn btn-ghost btn-sm border"
+            className="btn btn-ghost btn-sm p-0"
             id="menu"
             aria-label="menu"
             onClick={() => setOpen(!open)}
           >
-            <i className="bx bx-menu-alt-right"></i>
+            <i className="bx bx-menu-alt-right bx-sm"></i>
           </button>
         </div>
       </div>

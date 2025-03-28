@@ -91,7 +91,7 @@ export default function Home() {
               </li>
               <li>
                 <button
-                  onClick={() => handleFilterClick('project')}
+                  onClick={() => handleFilterClick('product')}
                   className={`text-base lowercase font-extralight hover:text-black ${
                     activeFilter === 'all' ? 'text-black font-light' : ''
                   }`}
@@ -133,7 +133,7 @@ export default function Home() {
           {/* Mobile navigation buttons */}
           <div className="navbar-end lg:hidden flex flex-row justify-between w-full mt-4">
             <button
-              className="btn btn-ghost btn-sm border"
+              className="btn btn-ghost btn-sm border p-0"
               onClick={() => {
                 setIsMenuOpen(false)
                 setIsFilterOpen(!isFilterOpen)
@@ -141,11 +141,11 @@ export default function Home() {
               id="filter"
               aria-label="filter"
             >
-              <i className="bx bx-filter"></i>
+              <i className="bx bx-filter bx-sm"></i>
             </button>
 
             <button
-              className="btn btn-ghost btn-sm border"
+              className="btn btn-ghost btn-sm border p-0"
               onClick={() => {
                 setIsFilterOpen(false)
                 setIsMenuOpen(!isMenuOpen)
@@ -153,7 +153,7 @@ export default function Home() {
               id="menu"
               aria-label="menu"
             >
-              <i className="bx bx-menu-alt-right"></i>
+              <i className="bx bx-menu-alt-right bx-sm"></i>
             </button>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function Home() {
               </li>
               <li>
                 <button
-                  onClick={() => handleFilterClick('all')}
+                  onClick={() => handleFilterClick('product')}
                   className={`text-base lowercase font-extralight hover:text-black block w-full text-left ${
                     activeFilter === 'all' ? 'text-black font-light' : ''
                   }`}
