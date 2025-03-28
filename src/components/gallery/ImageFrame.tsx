@@ -39,7 +39,7 @@ export default function ImageFrame({
       </div>
 
       {/* Mobile-specific text overlay */}
-      <div className="md:hidden absolute inset-0 bg-black/50 flex items-end p-4">
+      <div className="lg:hidden absolute inset-0 bg-black/50 flex items-end p-4">
         <div className="text-center w-full">
           <h3 className="text-lg font-light text-white">{title}</h3>
           <p className="text-sm font-extralight text-white/90">{location}</p>
