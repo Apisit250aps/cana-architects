@@ -32,12 +32,12 @@ export default function AboutPage() {
             <div className="space-y-6">
               <p className="text-2xl font-light leading-relaxed text-gray-800">
                 CANA is an architectural studio <br />
-                and interior design collective.
+                and interior design.
               </p>
 
               <div className="space-y-2 font-extralight text-gray-700">
                 <p className="text-lg">บริการออกแบบสถาปัตยกรรม</p>
-                <p className="text-lg">และสถาปัตยกรรมภายในแบบครบวงจร</p>
+                <p className="text-lg">และสถาปัตยกรรมภายใน</p>
               </div>
             </div>
 
@@ -59,7 +59,7 @@ export default function AboutPage() {
         </div>
 
         {/* Philosophy Section */}
-        <section className="max-w-6xl mx-auto mt-24 px-4">
+        {/* <section className="max-w-6xl mx-auto mt-24 px-4">
           <h2 className="text-3xl font-light tracking-tight mb-8 pb-2 border-b">
             Our Philosophy
           </h2>
@@ -88,10 +88,10 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Services Section */}
-        <section className="max-w-6xl mx-auto mt-24 px-4">
+        {/* <section className="max-w-6xl mx-auto mt-24 px-4">
           <h2 className="text-3xl font-light tracking-tight mb-8 pb-2 border-b">
             Our Services
           </h2>
@@ -118,7 +118,7 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
 
       <Footer />
