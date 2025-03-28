@@ -126,6 +126,12 @@ export default async function ProjectDetail({
         </div>
       </div>
       <ProtectedGallery images={images} title={project.title} />
+      <a
+        href={'/'}
+        className="fixed bottom-4 right-4 bg-white text-black btn btn-circle btn-md p-6 rounded-full transition"
+      >
+        <i className="bx bx-home bx-sm"></i>
+      </a>
       <Footer />
     </>
   )
