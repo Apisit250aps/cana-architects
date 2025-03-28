@@ -12,7 +12,7 @@ export default function Footer() {
           />
         </a>
         <nav>
-          <div className="grid grid-flow-col gap-7 pt-4">
+          <div className="grid grid-flow-col gap-8 pt-2">
             <a
               href={'https://www.facebook.com/cana.architects'}
               id="facebook"
