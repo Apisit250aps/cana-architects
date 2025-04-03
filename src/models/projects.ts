@@ -20,6 +20,7 @@ export interface IProject extends Document {
   tags: string[]
   coverImage: string
   galleryImages: string[]
+  displayOrder: number
   createdAt: Date
   updatedAt: Date
 }
@@ -40,7 +41,8 @@ const projectSchema = new Schema<IProject>(
     description: { type: String, required: true },
     tags: { type: [String], required: true },
     coverImage: { type: String, required: true },
-    galleryImages: { type: [String], required: true }
+    galleryImages: { type: [String], required: true },
+    displayOrder: { type: Number, default: 0 }
   },
   { timestamps: true }
 )
@@ -56,4 +58,5 @@ projectSchema.pre<IProject>('save', function (next) {
   next()
 })
 
-export const Project = models.projects || model<IProject>('projects', projectSchema)
+export const Project =
+  models.projects || model<IProject>('projects', projectSchema)

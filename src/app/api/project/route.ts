@@ -5,8 +5,6 @@ import { Project } from '@/models/projects';
 import slugify from 'slugify';
 import { uploadToStorage } from '@/lib/utils';
 
-
-
 export async function POST(req: NextRequest) {
   try {
     // Connect to database
@@ -75,6 +73,15 @@ export async function POST(req: NextRequest) {
     // Upload image to storage (e.g. S3, local filesystem, etc.)
     const coverImageUrl = await uploadToStorage(coverImageBuffer, coverImageName, coverImageFile.type);
     
+    // Find highest display order to place new project at the end
+    const highestOrderProject = await Project.findOne()
+      .sort({ displayOrder: -1 })
+      .select('displayOrder');
+    
+    const displayOrder = highestOrderProject 
+      ? (highestOrderProject.displayOrder + 1) 
+      : 0;
+    
     // Create new project
     const newProject = new Project({
       title,
@@ -91,7 +98,8 @@ export async function POST(req: NextRequest) {
       description,
       tags,
       coverImage: coverImageUrl,
-      galleryImages: [] // Will be populated later via the gallery endpoint
+      galleryImages: [], // Will be populated later via the gallery endpoint
+      displayOrder // Add the display order
     });
     
     // Save project to database
@@ -118,18 +126,50 @@ export const config = {
   },
 };
 
+type ProjectQuery = { [key: string]: unknown}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(req: NextRequest) {
   try {
     // Connect to database
     await connectDB();
     
-    // Fetch all projects
-    const projects = await Project.find();
+    // Parse query parameters
+    const url = new URL(req.url);
+    const category = url.searchParams.get('category');
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const sortBy = url.searchParams.get('sortBy') || 'displayOrder';
+    const sortOrder = url.searchParams.get('sortOrder') || 'asc';
     
-    // Return projects
-    return NextResponse.json({ projects });
+    const skip = (page - 1) * limit;
+    
+    // Build query
+    const query: ProjectQuery = {};
+    if (category) {
+      query.category = category;
+    }
+    
+    // Build sort object
+    const sortObj: { [key: string]: 1 | -1 } = {};
+    sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    
+    // Get total count
+    const total = await Project.countDocuments(query);
+    
+    // Fetch projects with sorting, pagination, and field selection
+    const projects = await Project.find(query)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit)
+      .select('title slug location type category client coverImage displayOrder');
+    
+    // Return projects with pagination info
+    return NextResponse.json({ 
+      projects, 
+      total, 
+      page, 
+      totalPages: Math.ceil(total / limit) 
+    });
     
   } catch (error) {
     console.error('Error fetching projects:', error);
