@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'canaarchitects.com',
-        pathname: '/uploads/**'
+        pathname: '/media/**'
       }
     ]
   }

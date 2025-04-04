@@ -208,7 +208,7 @@ export default function ImageCarousel({
               >
                 {images.map((image, index) => (
                   <div key={index} className="flicking-panel h-full w-full flex items-center justify-center p-4">
-                    <div className="relative w-full h-full max-h-[calc(80vh-120px)]">
+                    <div className="relative w-full h-full max-h-[calc(85vh-120px)]">
                       <Image
                         src={image}
                         alt={`${title} - Image ${index + 1}`}
