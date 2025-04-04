@@ -272,7 +272,7 @@ const AdminUploadPage = () => {
         // Redirect to project page
         setTimeout(() => {
           if (data.project.slug) {
-            router.push(`/project/${data.project.slug}`)
+            router.push(`/${data.project.slug}`)
           }
         }, 2000)
       }

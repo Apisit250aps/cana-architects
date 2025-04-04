@@ -360,7 +360,7 @@ export default function EditProjectPage() {
           if (data.project.slug) {
             router.push(`/${data.project.slug}`)
           } else {
-            router.push(`/project/${projectId}`)
+            router.push(`/admin/project/${projectId}`)
           }
         }, 2000)
       }

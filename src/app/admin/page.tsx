@@ -18,15 +18,15 @@ interface Project {
   category: 'interior' | 'exterior' | 'product'
   client: string
   coverImage: string
-  displayOrder: number
+  displayOrder?: number
 }
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [sortField, setSortField] = useState<keyof Project>('displayOrder')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [sortField] = useState<keyof Project>('displayOrder')
+  const [sortDirection] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
@@ -54,8 +54,8 @@ export default function AdminProjects() {
         if (sortField === 'displayOrder') {
           sortedProjects = sortedProjects.sort((a, b) => {
             return sortDirection === 'asc'
-              ? a.displayOrder - b.displayOrder
-              : b.displayOrder - a.displayOrder
+              ? (a.displayOrder || 0) - (b.displayOrder || 0)
+              : (b.displayOrder || 0) - (a.displayOrder || 0)
           })
         }
 
@@ -72,31 +72,7 @@ export default function AdminProjects() {
   }, [currentPage, sortField, sortDirection])
 
   // Handle sorting
-  const handleSort = (field: keyof Project) => {
-    // If we're changing from displayOrder to another field and order has changed, warn user
-    if (
-      sortField === 'displayOrder' &&
-      field !== 'displayOrder' &&
-      hasOrderChanged
-    ) {
-      if (
-        !confirm(
-          'You have unsaved order changes. Changing the sort will discard these changes. Continue?'
-        )
-      ) {
-        return
-      }
-      setHasOrderChanged(false)
-    }
-
-    if (field === sortField) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortField(field)
-      setSortDirection('asc')
-    }
-    setCurrentPage(1)
-  }
+  const handleSort = () => {}
 
   // Show toast message
   const showToast = (message: string, type: string) => {
@@ -310,54 +286,35 @@ export default function AdminProjects() {
             </div>
           </div>
 
-          {sortField === 'displayOrder' && (
-            <div className="alert alert-info mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="stroke-current shrink-0 w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <div>
-                <p>
-                  Drag and drop projects to reorder them. Click Save Order when
-                  done.
-                </p>
-              </div>
-            </div>
-          )}
-
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
                 <tr>
                   <th className="w-8">
-                    #
+                    <button
+                      className={`btn btn-xs btn-ghost ${
+                        sortField === 'displayOrder' ? 'text-primary' : ''
+                      }`}
+                      onClick={() => handleSort()}
+                      title="Sort by display order (enables drag and drop reordering)"
+                    >
+                      #
+                    </button>
                   </th>
-                  <th
-                    onClick={() => handleSort('title')}
-                    className="cursor-pointer"
-                  >
-                    Project
+                  <th onClick={() => handleSort()} className="cursor-pointer">
+                    Project{' '}
+                    {sortField === 'title' &&
+                      (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th
-                    onClick={() => handleSort('type')}
-                    className="cursor-pointer"
-                  >
-                    Detail
+                  <th onClick={() => handleSort()} className="cursor-pointer">
+                    Detail{' '}
+                    {sortField === 'type' &&
+                      (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th
-                    onClick={() => handleSort('client')}
-                    className="cursor-pointer"
-                  >
-                    Client
+                  <th onClick={() => handleSort()} className="cursor-pointer">
+                    Client{' '}
+                    {sortField === 'client' &&
+                      (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th>Actions</th>
                 </tr>

@@ -53,8 +53,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Cana Architects',
-    description:
-      'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
+    description: 'CANA is an architectural and interior design studio.',
     creator: '@canaarchitects',
     images: ['https://canaarchitects.com/assets/logo/squre-logo.png']
   },

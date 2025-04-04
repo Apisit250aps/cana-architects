@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/database';
 import { Project } from '@/models/projects';
-
+import { auth } from '@/auth';
 import slugify from 'slugify';
 import { uploadToStorage } from '@/lib/utils';
 
 export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session || session.user.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Unauthorized access. Admin privileges required.' }, 
+        { status: 401 }
+      );
+    }
+
     // Connect to database
     await connectDB();
     
@@ -73,16 +82,14 @@ export async function POST(req: NextRequest) {
     // Upload image to storage (e.g. S3, local filesystem, etc.)
     const coverImageUrl = await uploadToStorage(coverImageBuffer, coverImageName, coverImageFile.type);
     
-    // Find highest display order to place new project at the end
-    const highestOrderProject = await Project.findOne()
-      .sort({ displayOrder: -1 })
-      .select('displayOrder');
+    // Find highest display order to place new project at the top (position 0)
+    // Get all projects and shift their display order down
+    await Project.updateMany(
+      {}, 
+      { $inc: { displayOrder: 1 } }
+    );
     
-    const displayOrder = highestOrderProject 
-      ? (highestOrderProject.displayOrder + 1) 
-      : 0;
-    
-    // Create new project
+    // Create new project with display order 0 (at the top)
     const newProject = new Project({
       title,
       slug,
@@ -99,7 +106,7 @@ export async function POST(req: NextRequest) {
       tags,
       coverImage: coverImageUrl,
       galleryImages: [], // Will be populated later via the gallery endpoint
-      displayOrder // Add the display order
+      displayOrder: 0 // New projects always appear at the top
     });
     
     // Save project to database
@@ -126,7 +133,7 @@ export const config = {
   },
 };
 
-type ProjectQuery = { [key: string]: unknown}
+type ProjectQuery = { [key: string]: unknown }
 
 export async function GET(req: NextRequest) {
   try {
@@ -152,6 +159,11 @@ export async function GET(req: NextRequest) {
     // Build sort object
     const sortObj: { [key: string]: 1 | -1 } = {};
     sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    
+    // Add secondary sort by displayOrder when sorting by another field
+    if (sortBy !== 'displayOrder') {
+      sortObj.displayOrder = 1; // Always sort by displayOrder ascending as secondary criteria
+    }
     
     // Get total count
     const total = await Project.countDocuments(query);
