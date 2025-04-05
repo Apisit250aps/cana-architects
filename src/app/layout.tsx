@@ -17,8 +17,7 @@ const prompt = Prompt({
 
 export const metadata: Metadata = {
   title: 'Cana Architects',
-  description:
-    'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
+  description: 'CANA is an architectural and interior design studio.',
   metadataBase: new URL('https://canaarchitects.com'),
   // Basic metadata
   applicationName: 'Cana Architects',
@@ -37,8 +36,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://canaarchitects.com',
     title: 'Cana Architects',
-    description:
-      'Award-winning architectural designs for residential, commercial and public spaces by Cana Architects',
+    description: 'CANA is an architectural and interior design studio.',
     siteName: 'Cana Architects',
     images: [
       {
