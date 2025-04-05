@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -479,10 +480,10 @@ export default function AdminProjects() {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination */}
+          {/* 
+  
           {totalPages > 1 && (
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-6 hidden">
               <div className="join">
                 <button
                   className="join-item btn"
@@ -516,6 +517,7 @@ export default function AdminProjects() {
               </div>
             </div>
           )}
+           */}
         </div>
       </div>
     </DndProvider>
