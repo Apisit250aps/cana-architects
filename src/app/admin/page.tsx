@@ -41,7 +41,7 @@ export default function AdminProjects() {
     const fetchProjects = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`/api/project`)
+        const response = await fetch(`/api/project?limit=1000`)
 
         if (!response.ok) {
           throw new Error('Failed to fetch projects')
