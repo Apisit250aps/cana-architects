@@ -45,7 +45,7 @@ export default function AboutPage() {
               <h2 className="text-2xl font-medium text-gray-900">
                 Pohntanate Boonphaeng
               </h2>
-              <p className="text-lg text-gray-700">Principal Architect</p>
+              <p className="text-lg text-gray-700">Founder & Architect</p>
               <div className="pt-4">
                 <a
                   href={'/contact'}

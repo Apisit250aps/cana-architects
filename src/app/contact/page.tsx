@@ -102,8 +102,8 @@ export default function ContactPage() {
               </h2>
               <div className="space-y-2 text-gray-600">
                 <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                <p>Saturday: By appointment</p>
-                <p>Sunday: Closed</p>
+                {/* <p>Saturday: By appointment</p>
+                <p>Sunday: Closed</p> */}
               </div>
             </div>
           </div>
